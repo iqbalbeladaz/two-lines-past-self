@@ -28,6 +28,14 @@ def main() -> None:
     out = Path(os.environ.get("ENTRY_OUTPUT", "/output/entry.txt"))
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(ENTRY, encoding="utf-8")
+    # Self-check the gate before finishing: exactly two lines, each one
+    # sentence, 1-280 characters of non-blank UTF-8 text.
+    written = out.read_text(encoding="utf-8")
+    lines = written.split("\n")
+    assert written.strip(), "entry must not be blank"
+    assert len(written) <= 280, f"entry is {len(written)} chars, over 280"
+    assert lines[0].strip() and lines[1].strip(), "entry must be two lines"
+    assert written.endswith("\n") and lines[2] == "", "entry must end cleanly"
 
 
 if __name__ == "__main__":
